@@ -1,0 +1,143 @@
+[2025-03-31 13:14:03] [INFO] CORE: 核心模块加载完成
+[2025-03-31 13:14:03] [INFO] CORE: 核心模块加载完成
+[2025-03-31 13:14:03] [WARNING] CORE: 内存使用超过阈值
+[2025-03-31 13:14:03] [ERROR] CORE: 文件读取失败
+[2025-03-31 13:14:03] [CRITICAL] CORE: 不可恢复错误，即将崩溃
+[2025-03-31 13:14:03] [ERROR] CLIENT: 库存不足
+[2025-03-31 13:14:03] [ERROR] CLIENT: 用户操作失败，已记录错误
+ CORE: 核心模块加载完成
+ CORE: 核心模块加载完成
+ CORE: 内存使用超过阈值
+ CORE: 文件读取失败
+ CORE: 不可恢复错误，即将崩溃
+ CLIENT: 库存不足
+ CLIENT: 用户操作失败，已记录错误
+[2025-03-31 13:19:16] [INFO] CORE: 核心模块加载完成
+[2025-03-31 13:19:16] [INFO] CORE: 核心模块加载完成
+[2025-03-31 13:19:16] [WARNING] CORE: 内存使用超过阈值
+[2025-03-31 13:19:16] [ERROR] CORE: 文件读取失败
+[2025-03-31 13:19:16] [CRITICAL] CORE: 不可恢复错误，即将崩溃
+[2025-03-31 13:19:16] [ERROR] CLIENT: 库存不足
+[2025-03-31 13:19:16] [ERROR] CLIENT: 用户操作失败，已记录错误
+[2025-03-31 13:20:13] [INFO] CORE: 核心模块加载完成
+[2025-03-31 13:20:13] [INFO] CORE: 核心模块加载完成
+[2025-03-31 13:20:13] [WARNING] CORE: 内存使用超过阈值
+[2025-03-31 13:20:13] [ERROR] CORE: 文件读取失败
+[2025-03-31 13:20:13] [CRITICAL] CORE: 不可恢复错误，即将崩溃
+[2025-03-31 13:20:13] [ERROR] CLIENT: 库存不足
+[2025-03-31 13:20:13] [ERROR] CLIENT: 用户操作失败，已记录错误
+[2025-03-31 17:49:18] [INFO] CORE: All workers have shutdown gracefully
+[2025-03-31 18:26:39] [INFO] CORE: Application started
+[2025-03-31 18:26:39] [INFO] CORE: Processing param
+[2025-03-31 18:26:39] [INFO] CORE: Processing param
+[2025-03-31 18:26:39] [INFO] CORE: Processing param
+[2025-03-31 18:26:39] [INFO] CORE: Processing param
+[2025-03-31 18:26:40] [INFO] CORE: Processing param
+[2025-03-31 18:26:40] [INFO] CORE: Processing param
+[2025-03-31 18:26:40] [INFO] CORE: Processing param
+[2025-03-31 18:26:40] [INFO] CORE: Processing param
+[2025-03-31 18:26:41] [INFO] CORE: Processing param
+[2025-03-31 18:26:41] [INFO] CORE: Processing param
+[2025-03-31 18:26:41] [INFO] CORE: Processing param
+[2025-03-31 18:26:41] [INFO] CORE: Processing param
+[2025-03-31 18:26:42] [INFO] CORE: Processing param
+[2025-03-31 18:26:42] [INFO] CORE: Processing param
+[2025-03-31 18:26:42] [INFO] CORE: Processing param
+[2025-03-31 18:26:42] [INFO] CORE: Processing param
+[2025-03-31 18:26:43] [INFO] CORE: Processing param
+[2025-03-31 18:26:43] [INFO] CORE: Processing param
+[2025-03-31 18:26:43] [INFO] CORE: Processing param
+[2025-03-31 18:26:43] [INFO] CORE: Processing param
+[2025-03-31 18:26:44] [INFO] CORE: Processing param
+[2025-03-31 18:26:44] [INFO] CORE: Processing param
+[2025-03-31 18:26:44] [INFO] CORE: Processing param
+[2025-03-31 18:26:44] [INFO] CORE: Processing param
+[2025-03-31 18:26:45] [INFO] CORE: Processing param
+[2025-03-31 18:26:45] [INFO] CORE: Processing param
+[2025-03-31 18:26:45] [INFO] CORE: Processing param
+[2025-03-31 18:26:45] [INFO] CORE: Processing param
+[2025-03-31 18:26:46] [INFO] CORE: Processing param
+[2025-03-31 18:26:46] [INFO] CORE: Processing param
+[2025-03-31 18:26:46] [INFO] CORE: Processing param
+[2025-03-31 18:26:46] [INFO] CORE: Processing param
+[2025-03-31 18:26:47] [INFO] CORE: Processing param
+[2025-03-31 18:26:47] [INFO] CORE: Processing param
+[2025-03-31 18:26:47] [INFO] CORE: Processing param
+[2025-03-31 18:26:47] [INFO] CORE: Processing param
+[2025-03-31 18:26:48] [INFO] CORE: Processing param
+[2025-03-31 18:26:48] [INFO] CORE: Processing param
+[2025-03-31 18:26:48] [INFO] CORE: Processing param
+[2025-03-31 18:26:48] [INFO] CORE: Processing param
+[2025-03-31 18:26:49] [INFO] CORE: Processing param
+[2025-03-31 18:26:49] [INFO] CORE: Processing param
+[2025-03-31 18:26:49] [INFO] CORE: Processing param
+[2025-03-31 18:26:49] [INFO] CORE: Processing param
+[2025-03-31 18:26:50] [INFO] CORE: Processing param
+[2025-03-31 18:26:50] [INFO] CORE: Processing param
+[2025-03-31 18:26:50] [INFO] CORE: Processing param
+[2025-03-31 18:26:50] [INFO] CORE: Processing param
+[2025-03-31 18:26:51] [INFO] CORE: Processing param
+[2025-03-31 18:26:51] [INFO] CORE: Processing param
+[2025-03-31 18:26:51] [INFO] CORE: Processing param
+[2025-03-31 18:26:51] [INFO] CORE: Processing param
+[2025-03-31 18:26:52] [INFO] CORE: Processing param
+[2025-03-31 18:26:52] [INFO] CORE: Processing param
+[2025-03-31 18:26:52] [INFO] CORE: Processing param
+[2025-03-31 18:26:52] [INFO] CORE: Processing param
+[2025-03-31 18:26:53] [INFO] CORE: Processing param
+[2025-03-31 18:26:53] [INFO] CORE: Processing param
+[2025-03-31 18:26:53] [INFO] CORE: Processing param
+[2025-03-31 18:26:53] [INFO] CORE: Processing param
+[2025-03-31 18:26:54] [INFO] CORE: Processing param
+[2025-03-31 18:26:54] [INFO] CORE: Processing param
+[2025-03-31 18:26:54] [INFO] CORE: Processing param
+[2025-03-31 18:26:54] [INFO] CORE: Processing param
+[2025-03-31 18:26:55] [INFO] CORE: Processing param
+[2025-03-31 18:26:55] [INFO] CORE: Processing param
+[2025-03-31 18:26:55] [INFO] CORE: Processing param
+[2025-03-31 18:26:55] [INFO] CORE: Processing param
+[2025-03-31 18:26:56] [INFO] CORE: Processing param
+[2025-03-31 18:26:56] [INFO] CORE: Processing param
+[2025-03-31 18:26:56] [INFO] CORE: Processing param
+[2025-03-31 18:26:56] [INFO] CORE: Processing param
+[2025-03-31 18:26:57] [INFO] CORE: Processing param
+[2025-03-31 18:26:57] [INFO] CORE: Processing param
+[2025-03-31 18:26:57] [INFO] CORE: Processing param
+[2025-03-31 18:26:57] [INFO] CORE: Processing param
+[2025-03-31 18:26:58] [INFO] CORE: Processing param
+[2025-03-31 18:26:58] [INFO] CORE: Processing param
+[2025-03-31 18:26:58] [INFO] CORE: Processing param
+[2025-03-31 18:26:58] [INFO] CORE: Processing param
+[2025-03-31 18:26:59] [INFO] CORE: Processing param
+[2025-03-31 18:26:59] [INFO] CORE: Processing param
+[2025-03-31 18:26:59] [INFO] CORE: Processing param
+[2025-03-31 18:26:59] [INFO] CORE: Processing param
+[2025-03-31 18:27:00] [INFO] CORE: Processing param
+[2025-03-31 18:27:00] [INFO] CORE: Processing param
+[2025-03-31 18:27:00] [INFO] CORE: Processing param
+[2025-03-31 18:27:00] [INFO] CORE: Processing param
+[2025-03-31 18:27:00] [INFO] CORE: Shutdown signal received
+[2025-03-31 18:27:00] [INFO] CORE: Initiating shutdown sequence
+[2025-03-31 18:27:01] [INFO] CORE: Processing param
+[2025-03-31 18:27:01] [INFO] CORE: Processing param
+[2025-03-31 18:27:01] [INFO] CORE: Processing param
+[2025-03-31 18:27:01] [INFO] CORE: Processing param
+[2025-03-31 18:27:02] [INFO] CORE: Processing param
+[2025-03-31 18:27:02] [INFO] CORE: Processing param
+[2025-03-31 18:27:02] [INFO] CORE: Processing param
+[2025-03-31 18:27:02] [INFO] CORE: Processing param
+[2025-03-31 18:27:03] [INFO] CORE: Processing param
+[2025-03-31 18:27:03] [INFO] CORE: Processing param
+[2025-03-31 18:27:03] [INFO] CORE: Processing param
+[2025-03-31 18:27:03] [INFO] CORE: Processing param
+[2025-03-31 18:27:04] [INFO] CORE: Processing param
+[2025-03-31 18:27:04] [INFO] CORE: Processing param
+[2025-03-31 18:27:04] [INFO] CORE: Processing param
+[2025-03-31 18:27:04] [INFO] CORE: Processing param
+[2025-03-31 18:49:38] [INFO] CORE: 核心模块加载完成
+[2025-03-31 18:49:38] [INFO] CORE: 核心模块加载完成
+[2025-03-31 18:49:38] [WARNING] CORE: 内存使用超过阈值
+[2025-03-31 18:49:38] [ERROR] CORE: 文件读取失败
+[2025-03-31 18:49:38] [CRITICAL] CORE: 不可恢复错误，即将崩溃
+[2025-03-31 18:49:38] [ERROR] CLIENT: 库存不足
+[2025-03-31 18:49:38] [ERROR] CLIENT: 用户操作失败，已记录错误
