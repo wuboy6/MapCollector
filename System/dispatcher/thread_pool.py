@@ -20,7 +20,7 @@ class ThreadPool:
             self.workers.append(worker)
 
 
-    def _submit(self, func, *args, **kwargs):
+    def submit(self, func, *args, **kwargs):
         """提交任务到线程池，返回任务ID"""
         task_id = uuid.uuid4().hex
         with self.lock:
@@ -33,7 +33,7 @@ class ThreadPool:
         self.task_queue.put((task_id, func, args, kwargs))
         return task_id
 
-    def _get_result(self, task_id, timeout=None):
+    def get_result(self, task_id, timeout=None):
         """获取任务结果，支持超时和阻塞等待"""
         with self.lock:
             if task_id not in self.results:
@@ -57,7 +57,7 @@ class ThreadPool:
         else:
             raise exception
 
-    def _shutdown(self, wait=True):
+    def shutdown(self, wait=True):
         """关闭线程池，可选是否等待队列任务完成"""
         self.running = False
         if wait:

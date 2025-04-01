@@ -35,13 +35,13 @@ def get_map_list() -> Tuple[int,List]:
             maps = session.exec(statement).all()
 
             maplist = [
-                (
-                    str(map.mapid),        # 转换UUID为字符串
-                    map.map_name,
-                    map.map_type,
-                    map.media_type,
-                    map.description
-                )
+                {
+                    "mapid" : str(map.mapid),        # 转换UUID为字符串
+                    "map_name" : map.map_name,
+                    "map_type" : map.map_type,
+                    "media_type" : map.media_type,
+                    "description" : map.description
+                }
                 for map in maps
             ]
 
@@ -239,12 +239,12 @@ def change_map(mapid_str: str, arcs: Optional[Dict] = None) -> int:
 
 # test/ use_example:
 if __name__ == "__main__":
-    # mat1 = cv2.imread("E:/dev/MapCollector/test/maps/ChinaMap.jpeg")
-    # status, id1 = add_map("中国地图", mat1)
-    # if status == 0 :
-    #     print(type(id1))
-    #     print(id1)
-    # status, id2 = add_map("中国地图", cv2.imread("E:/dev/MapCollector/test/maps/ChinaViewMap.jpg"))
+    mat1 = cv2.imread("E:/dev/MapCollector/test/maps/ChinaMap.jpeg")
+    status, id1 = add_map("中国地图", mat1)
+    if status == 0 :
+        print(type(id1))
+        print(id1)
+    status, id2 = add_map("中国地图", cv2.imread("E:/dev/MapCollector/test/maps/ChinaViewMap.jpg"))
     status, l1 = get_map_list()
     id1 = l1[0][0]
     [print(l) for l in l1]

@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 from sqlmodel import Session, select
 from file_system.models import User
 from file_system.db import engine
