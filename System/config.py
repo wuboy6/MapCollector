@@ -1,48 +1,63 @@
 # 📁 config.py
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from pydantic import Field, PostgresDsn, validator
 
+# 核心修复：获取项目根目录绝对路径
+PROJECT_ROOT = Path(__file__).resolve().parent.parent  # 根据实际层级调整
+
 
 class Settings(BaseSettings):
-    """智能配置类，支持多环境自动识别"""
+    """全局配置单例类"""
 
-    # 数据库配置
     DB_HOST: str = Field(..., env="DB_HOST")
     DB_PORT: int = Field(5432, env="DB_PORT")
     DB_NAME: str = Field(..., env="DB_NAME")
     DB_USER: str = Field(..., env="DB_USER")
     DB_PASSWORD: str = Field(..., env="DB_PASSWORD")
 
-    # 生成完整 DSN
     DATABASE_URI: PostgresDsn | None = None
 
     @validator("DATABASE_URI", pre=True)
     def build_db_uri(cls, v, values) -> str:
-        """动态生成 PostgreSQL 连接字符串"""
         return (
             f"postgresql://{values['DB_USER']}:{values['DB_PASSWORD']}"
             f"@{values['DB_HOST']}:{values['DB_PORT']}/{values['DB_NAME']}"
         )
 
     class Config:
-        # 自动加载 .env 和 .env.local 文件
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+        # 固定加载路径为项目根目录
+        env_file = PROJECT_ROOT / '.env'
+        env_file_encoding = 'utf-8'
         case_sensitive = True
 
 
-# 初始化配置
-def load_config(env_file=".env") -> Settings:
-    """加载配置并自动识别环境"""
-    # 1. 加载基础配置
-    load_dotenv(env_file)
+# 单例模式实现
+_settings = None
 
-    # 2. 加载环境特定配置（如 .env.production）
-    env_name = os.getenv("APP_ENV", "development")
-    env_specific = f".env.{env_name}"
-    if os.path.exists(env_specific):
-        load_dotenv(env_specific, override=True)
 
-    return Settings()
+def get_settings() -> Settings:
+    """获取全局唯一配置实例"""
+    global _settings
+    if _settings is None:
+        # 多环境加载逻辑
+        env = os.getenv("APP_ENV", "development")
+        env_files = [
+            '..'/ PROJECT_ROOT / '.env',
+        ]
+
+        # 按优先级加载环境变量
+        loaded = False
+        for env_file in env_files:
+            if env_file.exists():
+                load_dotenv(env_file, override=not loaded)
+                loaded = True
+
+        _settings = Settings()
+    return _settings
+
+
+# 在模块加载时立即初始化
+settings = get_settings()

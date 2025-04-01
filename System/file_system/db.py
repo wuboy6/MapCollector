@@ -2,9 +2,9 @@ from sqlmodel import create_engine, SQLModel
 import os
 from typing import Optional
 from sqlalchemy.engine import Engine
-import config
+from config import settings
 
-settings = config.load_config("../../.env")
+
 # 优先读取环境变量配置
 DATABASE_URL: str = str(settings.DATABASE_URI)
 
