@@ -85,7 +85,7 @@ class NormalMainWindow(QMainWindow):
         layout.addWidget(self.map_tree)
 
         self.map_list_timer = QTimer(self)
-        self.map_list_timer.setInterval(60000)  # 60s
+        self.map_list_timer.setInterval(6000)  # 1s
         self.map_list_timer.timeout.connect(self._update_map_list)
         self.map_list_timer.start()
 
