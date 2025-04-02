@@ -1,4 +1,4 @@
-from map_server import map_server
-from user_server import UserServer
+from logical_components.map_server import MapServer
+from logical_components.user_server import UserServer, NormalUser, SuperUser, UserView
 
-__all__ = ["map_server", "UserServer"]
+__all__ = ["MapServer", "UserServer", "UserView", "NormalUser", "SuperUser"]

@@ -32,7 +32,7 @@ class MapSearchEngine:
         """
         return difflib.SequenceMatcher(None, target_str, query_str).ratio()
 
-    def _get_map_score(self, map_info, query_name="", query_type="", query_media="", query_desc=""):
+    def _get_map_score(self, map_info, query_name: str="", query_type: str="", query_media:str="", query_desc : str=""):
         """
         根据给定的查询条件计算地图信息的综合匹配度分数
         """
@@ -57,7 +57,7 @@ class MapSearchEngine:
         return score
 
     def search_maps(self,
-                    query : str,
+                    query_name: str="", query_type: str="", query_media:str="", query_desc : str="",
                     num_results : int=5) -> List[str]:
         """
         根据给定查询信息，返回相似度最高的地图ID集合（不超过 num_results 个）
@@ -68,10 +68,7 @@ class MapSearchEngine:
         :param num_results: 指定返回结果的最大数量
         :return: 按相似度排序后的 mapid 列表
         """
-        query_name = query
-        query_type = query
-        query_media = query
-        query_desc = query
+
         core_trace(f"开始搜索，查询条件：name={query_name} type={query_type} media={query_media} desc={query_desc}")
 
         # 对地图进行评分

@@ -150,3 +150,54 @@ def get_user_model(uuid_str: str) -> Tuple[int, Dict]:
     except Exception as e:
         core_error(f"用户详情获取失败: {str(e)}")
         return (1010, {})
+
+def set_user_model(uuid_str: str, details: Dict) -> int:
+    """
+    更新用户详细信息
+    返回: 状态码
+      - 0: 成功
+      - 2001: 用户不存在（或无效UUID）
+      - 2002: 邮箱已被占用
+      - 1010: 系统错误
+    """
+    try:
+        user_uuid = UUID(uuid_str)
+    except ValueError:
+        core_warn(f"无效UUID格式: {uuid_str}")
+        return 2001
+
+    try:
+        with Session(engine) as session:
+            user = session.get(User, user_uuid)
+            if not user:
+                core_warn(f"要修改的用户不存在: {user_uuid}")
+                return 2001
+
+            new_email = details.get("user_email")
+            if new_email:
+                # 查找是否有其他用户占用此邮箱
+                other_user = (
+                    session.execute(
+                        select(User).where(
+                            User.email == new_email,
+                            User.id != user_uuid
+                        )
+                    ).scalar_one_or_none()
+                )
+                if other_user:
+                    core_warn(f"邮箱已被占用: {new_email}")
+                    return 2002
+                user.email = new_email
+
+            if "user_name" in details:
+                user.name = details["user_name"]
+            if "last_read" in details and details["last_read"]:
+                user.last_read = UUID(details["last_read"])
+
+            session.commit()
+            return 0
+
+    except Exception as e:
+        core_error(f"用户信息修改失败: {str(e)}")
+        return 1016
+

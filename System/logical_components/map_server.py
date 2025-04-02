@@ -1,10 +1,10 @@
 import file_system as fs
-from mat_reader import MatReader
+from logical_components.mat_reader import MatReader
 from dispatcher import ThreadPool
 import atexit
 from Log import core_trace, core_info, core_warn, core_error, core_fatal
-from search_engine import MapSearchEngine
-from typing import List, Tuple, Dict
+from logical_components.search_engine import MapSearchEngine
+from typing import List, Tuple, Dict, Optional
 import cv2
 
 class MapServer:
@@ -25,7 +25,7 @@ class MapServer:
 
     def __init_resources(self):
         """初始化地图服务资源"""
-        self._mat_reader = MatReader
+        self._mat_reader = MatReader()
         self._thread_pool = ThreadPool(4)
         status, self._maps = fs.get_map_list()
         if status:
@@ -34,15 +34,26 @@ class MapServer:
         self.search_engine = MapSearchEngine(self._maps)  # 共享内存
         core_info("MapServer初始化完成")
 
+    def load_mat(self, file_pate: str):
+        return self._mat_reader.read_data(file_pate)
+
+    def add_map(self, file_path: str, map_name: str) -> Tuple[int, str]:
+        mat = self.load_mat(file_path)
+        return fs.add_map(map_name, mat)
+
+    def change_map(self,mapid_str: str, arcs: Optional[Dict] = None) -> int :
+        return fs.change_map(mapid_str, arcs)
+
     def get_map_list(self) -> List:
         return self._maps[:]
+
 
     def get_map(self, mapid) -> Tuple[cv2.Mat|None, Dict]:
         status, mat, content = fs.get_map(mapid)
         return mat, content
 
-    def search(self,query : str, top_n : int = 10) -> List[str]:
-        return self.search_engine.search_maps(query, top_n)
+    def search(self,query_name: str="", query_type: str="", query_media:str="", query_desc : str="", top_n : int = 10) -> List[str]:
+        return self.search_engine.search_maps(query_name, query_type, query_media, query_desc, num_results=top_n)
 
 
 

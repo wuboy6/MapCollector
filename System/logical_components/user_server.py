@@ -6,7 +6,7 @@ from Log import  core_trace, core_info, core_warn, core_error, core_fatal
 import hashlib
 import file_system as fs
 import os
-from map_server import map_server
+from logical_components.map_server import map_server
 import cv2
 import numpy as np
 
@@ -34,7 +34,12 @@ class NormalUser(UserView):
         super().__init__(user_id, user_email)
         self._mapid_read_now: str = ""          # 当前查看地图ID
         self._map_list: List[str] = []          # 待查看地图队列
+        self._map_list_index : int = 0 #索引
         self._map_lock = threading.RLock()      # 独立状态锁
+        self.details = fs.get_user_model(user_id)[1]
+        last_read = self.details["last_read"]
+        if(last_read):
+            self._mapid_read_now = last_read
 
     @property
     def current_map(self) -> str:
@@ -49,6 +54,13 @@ class NormalUser(UserView):
             self._mapid_read_now = map_id
             self.update_activity()  # 更新活跃时间
 
+    def set_current_map(self, map_id: str):
+        """设置当前查看地图（线程安全）"""
+        with self._map_lock:
+            self._mapid_read_now = map_id
+            fs.set_user_model(self.user_id, {'last_read': self._mapid_read_now})
+            self.update_activity()  # 更新活跃时间
+
     @property
     def pending_maps(self) -> List[str]:
         """获取待查看列表（线程安全）"""
@@ -60,27 +72,81 @@ class NormalUser(UserView):
         with self._map_lock:
             self._map_list = map_list[:]
 
-    def search(self, query: str, top_n: int = 10):
+    def search(self, query_name: str="", query_type: str="", query_media:str="", query_desc : str="", top_n: int = 10):
         with self._map_lock:
-            map_list = map_server.search(query, top_n)
+            self.update_activity()
+            map_list = map_server.search(query_name, query_type, query_media, query_desc, top_n=top_n)
             self._map_list = map_list[:]
+            self._map_list_index = 0
+            self.current_map = self._map_list[0] if self._map_list else self.current_map
+            fs.set_user_model(self.user_id,{'last_read': self._mapid_read_now})
 
     def next(self) -> str:
         with self._map_lock:
+            self.update_activity()
             if self._map_list:
-                self._mapid_read_now = self._map_list.pop(0)
+                if (self._map_list_index + 1 < len(self._map_list)):
+                    self._map_list_index += 1
+                    self._mapid_read_now = self._map_list[self._map_list_index]
+                    fs.set_user_model(self.user_id, {'last_read': self._mapid_read_now})
                 return self._mapid_read_now
             else :
                 return ""
 
-    def get_map_details_now(self) -> Tuple[Optional[cv2.Mat|np.array], Dict]:
+    def just(self) -> str:
         with self._map_lock:
+            self.update_activity()
+            self._mapid_read_now = self._map_list[self._map_list_index]
+            fs.set_user_model(self.user_id, {'last_read': self._mapid_read_now})
+            return self._mapid_read_now
+
+    def before(self) -> str:
+        with self._map_lock:
+            self.update_activity()
+            if self._map_list:
+                if (self._map_list_index  > 0):
+                    self._map_list_index -= 1
+                    self._mapid_read_now = self._map_list[self._map_list_index]
+                    fs.set_user_model(self.user_id, {'last_read': self._mapid_read_now})
+                return self._mapid_read_now
+            else :
+                return ""
+
+    def get_map_details_now(self) -> Tuple[Optional[np.array], Dict]:
+        with self._map_lock:
+            self.update_activity()
             if self._mapid_read_now:
                 status, mat, details = fs.get_map(self._mapid_read_now)
                 return mat, details
             else:
                 return None, {}
 
+    def get_notes_of_current_map(self) -> Optional[List[Dict]]:
+        with self._map_lock:
+            self.update_activity()
+            status, ld = fs.get_notes(mapid=self._mapid_read_now, size=20)
+            if not status:
+                return ld
+            else:
+                return None
+
+    def write_note(self, note: str) -> int:
+        with self._map_lock:
+            self.update_activity()
+            status,_ = fs.add_note(mapid_str=self._mapid_read_now, uid_str=self.user_id, context=note)
+            return status
+
+    def reset_user_name(self, new_name: str)-> int:
+        with self._map_lock:
+            self.update_activity()
+            status = fs.set_user_model(self.user_id, {"user_name":new_name})
+            return status
+
+    def reset_user_email(self, new_email: str)-> int:
+        with self._map_lock:
+            self.update_activity()
+            status = fs.set_user_model(self.user_id, {"user_email":new_email})
+            return status
 
 
 
@@ -129,11 +195,17 @@ class UserServer:
             self.map_server = map_server
             core_info("成功创建用户服务器")
 
+
     def _cleanup_loop(self):
         """后台清理线程"""
         while self._running:
             time.sleep(self._cleanup_interval)
             self.remove_inactive_users()
+
+    def get_user_name(self, uid: str) -> str:
+        with self._lock:
+            _, details = fs.get_user_model(uid)
+            return details["user_name"]
 
     def register_user(self,
                       user_email: str,
