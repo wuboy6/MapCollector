@@ -61,22 +61,27 @@ class NormalUser(UserView):
             self._map_list = map_list[:]
 
     def search(self, query: str, top_n: int = 10):
-        map_list = map_server.search(query, top_n)
-        self._map_list = map_list[:]
+        with self._map_lock:
+            map_list = map_server.search(query, top_n)
+            self._map_list = map_list[:]
 
     def next(self) -> str:
-        if self._map_list:
-            self._mapid_read_now = self._map_list.pop(0)
-            return self._mapid_read_now
-        else :
-            return ""
+        with self._map_lock:
+            if self._map_list:
+                self._mapid_read_now = self._map_list.pop(0)
+                return self._mapid_read_now
+            else :
+                return ""
 
     def get_map_details_now(self) -> Tuple[Optional[cv2.Mat|np.array], Dict]:
-        if self._mapid_read_now:
-            status, mat, details = fs.get_map(self._mapid_read_now)
-            return mat, details
-        else:
-            return None, {}
+        with self._map_lock:
+            if self._mapid_read_now:
+                status, mat, details = fs.get_map(self._mapid_read_now)
+                return mat, details
+            else:
+                return None, {}
+
+
 
 
 
