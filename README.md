@@ -1,0 +1,2 @@
+# MapCollector
+Personal architecture homework.
