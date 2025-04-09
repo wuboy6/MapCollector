@@ -189,7 +189,7 @@ class LoginWindow(QWidget):
             QMessageBox.critical(self, "系统错误", f"登录出现异常: {str(e)}")
 
     def show_register(self):
-        from ui.register import RegisterWindow  # 需要在同级目录下创建register_window.py
+        from src.ui.register import RegisterWindow  # 需要在同级目录下创建register_window.py
         self.register_window = RegisterWindow()
         self.register_window.register_success.connect(self.handle_register_success)
         self.register_window.show()

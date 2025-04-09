@@ -89,24 +89,26 @@ async def add_map_route(req: AddMapRequest):
 
 # 用户视图相关端点
 @app.get("/user/{uid}/changes/selfall", response_model=ChangeResponse)
-def get_change_details_by_current_map_route(uid: str):
-    status, details = get_change_details_by_current_map_route(uid)
+def get_change_details_route(uid: str):
+    status, details = get_change_details(uid)
     if status == 0:
         return details
     raise HTTPException(status_code=500, detail=f"服务器错误: 错误码{status}")
 
 @app.get("/user/{uid}/changes/selfcurr", response_model=ChangeResponse)
-def get_change_details_by_current_map(uid: str):
+def get_change_details_by_current_map_route(uid: str):
     status, details = get_change_details_by_current_map(uid)
+    print(f"debug1{details}")
     if status == 0:
-        return details
+        return {"details": details}
     raise HTTPException(status_code=500, detail=f"服务器错误: 错误码{status}")
 
 @app.get("/user/{uid}/changes/curr", response_model=ChangeResponse)
 def get_current_map_full_change_details_route(uid: str):
-    status, details = get_change_details(uid)
+    status, details = get_current_map_full_change_details(uid)
+    print(f"debug1{details}")
     if status == 0:
-        return {"arcs": details}
+        return {"details": details}
     raise HTTPException(status_code=500, detail=f"服务器错误: 错误码{status}")
 
 @app.put("/user/{uid}/current_map/{mapid}")
@@ -154,6 +156,7 @@ def write_note_route(uid: str, req: WriteNoteRequest):
 
 @app.put("/user/{uid}/maps/{mapid}")
 def user_change_map_route(uid: str, mapid: str, req: ChangeMapRequest):
+    print(req.arcs)
     status = user_change_map(uid, mapid, req.arcs)
     if status != 0:
         raise HTTPException(status_code=400, detail=f"修改地图失败，状态码: {status}")

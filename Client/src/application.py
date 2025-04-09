@@ -1,8 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
-from ui.login import LoginWindow
-from ui.normal_main import NormalMainWindow
+from src.ui.login import LoginWindow
+from src.ui.normal_main import NormalMainWindow
 
 
 def main():

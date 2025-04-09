@@ -22,14 +22,14 @@ class UserResponse(BaseModel):
 
 # 地图相关模型
 class ChangeResponse(BaseModel):
-    details: Optional[Dict] = []
+    details: Optional[List] = []
 
 class AddMapRequest(BaseModel):
     map_name: str
     file: str  # 字符串化的图片内容 (Base64 编码)
 
 class ChangeMapRequest(BaseModel):
-    arcs: Optional[List] = []
+    arcs: Optional[Dict] = {}
 
 class SearchRequest(BaseModel):
     query_name: str = ""

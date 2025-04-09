@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QToolButton, QMenu, QLineEdit, QCheckBox, QTableWidget,
     QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QSplitter, QTableWidgetItem,
     QScrollArea, QFrame, QStackedWidget, QTextEdit, QSizePolicy, QMessageBox,
-    QTreeWidget, QTreeWidgetItem, QDialog, QFileDialog, QApplication
+    QTreeWidget, QTreeWidgetItem, QDialog, QFileDialog, QApplication, QFormLayout
 )
 from PyQt5.QtCore import Qt, pyqtSignal, QTimer
 from PyQt5.QtGui import QIcon, QPixmap, QFont, QImage
@@ -303,16 +303,19 @@ class NormalMainWindow(QMainWindow):
         self.prev_btn = self._create_icon_btn("../res/left_arrow.png", "上一张")
         self.next_btn = self._create_icon_btn("../res/right_arrow.png", "下一张")
         self.comment_btn = self._create_text_btn("显示评论", "#3498db")
-        self.history_btn = self._create_text_btn("显示历史修改数据", "#9b59b6")  # 新增按钮
+        self.edit_map_btn = self._create_text_btn("修改地图信息", "#2ecc71")  # 新增按钮
+        self.history_btn = self._create_text_btn("显示历史修改数据", "#9b59b6")
 
         self.prev_btn.clicked.connect(lambda: self.navigation_requested.emit(-1))
         self.next_btn.clicked.connect(lambda: self.navigation_requested.emit(1))
         self.comment_btn.clicked.connect(self._show_comments)
-        self.history_btn.clicked.connect(self._show_change_history)  # 按钮点击事件
+        self.edit_map_btn.clicked.connect(self._edit_map_info)  # 按钮点击事件
+        self.history_btn.clicked.connect(self._show_change_history)
 
         nav_bar.addWidget(self.prev_btn)
         nav_bar.addWidget(self.comment_btn)
-        nav_bar.addWidget(self.history_btn)  # 添加到导航栏
+        nav_bar.addWidget(self.edit_map_btn)  # 添加到导航栏
+        nav_bar.addWidget(self.history_btn)
         nav_bar.addWidget(self.next_btn)
         layout.addLayout(nav_bar)
 
@@ -321,6 +324,25 @@ class NormalMainWindow(QMainWindow):
 
         return view
 
+    def _edit_map_info(self):
+        """显示修改地图信息对话框"""
+        try:
+            # 获取当前地图 ID
+            resp = requests.get(f"{SERVER_URL}/user/{self.uid}/current_map/details")
+            if resp.status_code == 200:
+                current_map = resp.json()
+                mapid = current_map.get("mapid", "")
+                map_details = current_map.get("details", {})
+                if mapid:
+                    dialog = EditMapInfoDialog(self.uid, mapid, map_details, self)
+                    if dialog.exec_() == QDialog.Accepted:
+                        self._refresh_display()  # 刷新地图信息
+            else:
+                error_msg = resp.json().get("detail", "未知错误")
+                QMessageBox.critical(self, "错误", f"无法获取当前地图信息: {error_msg}")
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"获取地图信息时发生异常:\n{str(e)}")
+
     def _show_change_history(self):
         """显示地图的历史修改数据"""
         try:
@@ -328,7 +350,7 @@ class NormalMainWindow(QMainWindow):
             response = requests.get(url)
 
             if response.status_code == 200:
-                changes = response.json().get("arcs")
+                changes = response.json().get("details")
                 if changes:
                     dialog = ChangeHistoryDialog(changes, self)
                     dialog.exec_()
@@ -763,7 +785,7 @@ class AddMapDialog(QDialog):
                 "description": description,
                 "public_time": public_time
             }
-            resp = requests.put(f"{SERVER_URL}/user/{self.uid}/maps/{map_id}", json=update_payload)
+            resp = requests.put(f"{SERVER_URL}/user/{self.uid}/maps/{map_id}", json={'arcs' : update_payload})
             if resp.status_code == 200:
                 QMessageBox.information(self, "成功", "地图已成功添加并更新信息")
                 self.accept()
@@ -811,6 +833,79 @@ class ChangeHistoryDialog(QDialog):
         # 设置表格属性
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
+
+class EditMapInfoDialog(QDialog):
+    def __init__(self, uid, mapid, current_details, parent=None):
+        super().__init__(parent)
+        self.uid = uid
+        self.mapid = mapid
+        self.current_details = current_details
+        self.setWindowTitle("修改地图信息")
+        self.setMinimumSize(400, 300)
+        self._init_ui()
+
+    def _init_ui(self):
+        layout = QVBoxLayout(self)
+        form_layout = QFormLayout()
+
+        # 地图信息字段
+        self.map_name_edit = QLineEdit(self.current_details.get("map_name", ""))
+        self.map_type_edit = QLineEdit(self.current_details.get("map_type", ""))
+        self.media_type_edit = QLineEdit(self.current_details.get("media_type", ""))
+        self.description_edit = QLineEdit(self.current_details.get("description", ""))
+
+        form_layout.addRow("地图名称:", self.map_name_edit)
+        form_layout.addRow("地图类型:", self.map_type_edit)
+        form_layout.addRow("媒介类型:", self.media_type_edit)
+        form_layout.addRow("地图描述:", self.description_edit)
+
+        layout.addLayout(form_layout)
+
+        # 按钮
+        btn_layout = QHBoxLayout()
+        confirm_btn = QPushButton("确认修改")
+        cancel_btn = QPushButton("取消")
+
+        confirm_btn.clicked.connect(self._handle_confirm)
+        cancel_btn.clicked.connect(self.reject)
+
+        btn_layout.addWidget(confirm_btn)
+        btn_layout.addWidget(cancel_btn)
+        layout.addLayout(btn_layout)
+
+    def _handle_confirm(self):
+        """处理修改地图信息"""
+        map_name = self.map_name_edit.text().strip()
+        map_type = self.map_type_edit.text().strip()
+        media_type = self.media_type_edit.text().strip()
+        description = self.description_edit.text().strip()
+
+        # 构建请求体
+        payload = {}
+        if map_name:
+            payload["map_name"] = map_name
+        if map_type:
+            payload["map_type"] = map_type
+        if media_type:
+            payload["media_type"] = media_type
+        if description:
+            payload["description"] = description
+
+        if not payload:
+            QMessageBox.warning(self, "输入错误", "至少修改一个字段！")
+            return
+
+        # 调用修改地图信息 API
+        try:
+            resp = requests.put(f"{SERVER_URL}/user/{self.uid}/maps/{self.mapid}", json={'arcs': payload})
+            if resp.status_code == 200:
+                QMessageBox.information(self, "成功", "地图信息修改成功")
+                self.accept()
+            else:
+                error_msg = resp.json().get("detail", "未知错误")
+                QMessageBox.critical(self, "错误", f"修改地图信息失败: {error_msg}")
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"修改地图信息时发生异常:\n{str(e)}")
 
 
 if __name__ == "__main__":
