@@ -28,7 +28,6 @@ class UserView(ABC):
         """检查用户权限"""
         pass
 
-
 class NormalUser(UserView):
     def __init__(self, user_id: str, user_email: str):
         super().__init__(user_id, user_email)
@@ -135,13 +134,13 @@ class NormalUser(UserView):
             self.update_activity()
             status,_ = fs.add_note(mapid_str=self._mapid_read_now, uid_str=self.user_id, context=note)
             return status
-
+#OK
     def reset_user_name(self, new_name: str)-> int:
         with self._map_lock:
             self.update_activity()
             status = fs.set_user_model(self.user_id, {"user_name":new_name})
             return status
-
+#OK
     def reset_user_email(self, new_email: str)-> int:
         with self._map_lock:
             self.update_activity()
@@ -163,12 +162,22 @@ class NormalUser(UserView):
     def has_permission(self, permission: str) -> bool:
         return permission in ["read", "write"]
 
+    def user_change_map(self,mapid_str: str, arcs: Optional[Dict] = None) -> int:
+        return fs.user_change_map(mapid_str, self.user_id, arcs)
+
+    def get_change_details_by_current_map(self) -> Tuple[int, List]:
+        return fs.get_change_details(user_id=self.user_id, mapid_str=self.current_map)
+
+    def get_change_details(self) -> Tuple[int, List]:
+        return fs.get_change_details(user_id=self.user_id, mapid_str=None)
+
+    def get_current_map_full_change_details(self)-> Tuple[int, List]:
+        return fs.get_change_details(mapid_str=self.current_map, user_id=None)
 
 class SuperUser(UserView):
     def has_permission(self, permission: str) -> bool:
         # 超级用户拥有所有权限
         return True
-
 
 # ================= 用户服务单例实现 =================
 class UserServer:
@@ -202,15 +211,15 @@ class UserServer:
             time.sleep(self._cleanup_interval)
             self.remove_inactive_users()
 
-    def get_user_name(self, uid: str) -> str:
+    def get_user_name(self, uid: str) -> str: #OK
         with self._lock:
             _, details = fs.get_user_model(uid)
             return details["user_name"]
 
-    def register_user(self,
+    def register_user(self,  #OK
                       user_email: str,
                       user_pwd: str,
-                      user_type: Type[UserView]) -> Optional[UserView]:
+                      user_type: Type[UserView] = NormalUser) -> Optional[UserView]:
 
         """注册或更新用户"""
         with self._lock:
@@ -231,7 +240,7 @@ class UserServer:
             self._active_users[user_id] = user
             return user
 
-    def get_active_user(self, user_id: str) -> Optional[UserView]:
+    def get_active_user(self, user_id: str) -> Optional[NormalUser]:
         """获取用户视图"""
         with self._lock:
             return self._active_users.get(user_id)
@@ -253,7 +262,7 @@ class UserServer:
         self._running = False
         self._cleanup_thread.join()
 
-    def register(self, email: str, password: str) -> Tuple[int, str]:
+    def register(self, email: str, password: str) -> Tuple[int, str]: #OK
         """
         用户注册功能
         返回: (状态码, 用户UUID)
@@ -281,7 +290,7 @@ class UserServer:
         else:
             return (status, "")
 
-    def login(self, email: str, password: str) -> Tuple[int, str]:
+    def login(self, email: str, password: str) -> Tuple[int, str]: #OK
         """
         用户登录功能
         返回: (状态码, 用户UUID)

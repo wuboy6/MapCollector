@@ -43,7 +43,7 @@ class MapServer:
 
     def change_map(self,mapid_str: str, arcs: Optional[Dict] = None) -> int :
         return fs.change_map(mapid_str, arcs)
-
+#OK
     def get_map_list(self) -> List:
         return self._maps[:]
 

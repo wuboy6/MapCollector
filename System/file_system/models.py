@@ -38,3 +38,14 @@ class Note(SQLModel, table = True):
     mapid : uuid.UUID = Field(foreign_key="map.mapid")
     content : str = Field(max_length=511)
     time : datetime = Field(default_factory=datetime.now)
+
+class MapChange(SQLModel, table = True):
+    change_id : uuid.UUID = Field(default=uuid.uuid4(), primary_key=True)
+    mapid : uuid.UUID = Field(foreign_key="map.mapid")
+    uid : uuid.UUID = Field(foreign_key="user.uid")
+    change_time: datetime = Field(default=datetime.now)
+    public_time: datetime = Field(nullable=True, default=None)
+    map_name: str = Field(max_length=127, nullable=True, default=None)
+    map_type: str = Field(max_length=63, nullable=True, default=None)
+    media_type: str = Field(nullable=True, default=None, max_length=63)
+    description: str = Field(nullable=True, default=None, max_length=511)
