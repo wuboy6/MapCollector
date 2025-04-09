@@ -355,7 +355,7 @@ def get_change_details(mapid_str: Optional[str],user_id : Optional[str]) -> Tupl
         mapid_uuid, user_uuid = None, None
 
         # 处理地图ID
-        if mapid_str.strip():
+        if mapid_str and mapid_str.strip():
             try:
                 mapid_uuid = UUID(mapid_str)
                 if not session.get(Map, mapid_uuid):
@@ -364,7 +364,7 @@ def get_change_details(mapid_str: Optional[str],user_id : Optional[str]) -> Tupl
                 return (1002, [])  # 无效的UUID格式
 
         # 处理用户ID
-        if user_id.strip():
+        if user_id and user_id.strip():
             try:
                 user_uuid = UUID(user_id)
                 if not session.get(User, user_uuid):

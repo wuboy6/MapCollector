@@ -6,8 +6,8 @@ import requests
 import numpy as np
 import cv2
 from PyQt5.QtWidgets import (
-    QMainWindow, QWidget, QToolButton, QMenu, QLineEdit, QCheckBox,
-    QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QSplitter,
+    QMainWindow, QWidget, QToolButton, QMenu, QLineEdit, QCheckBox, QTableWidget,
+    QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QSplitter, QTableWidgetItem,
     QScrollArea, QFrame, QStackedWidget, QTextEdit, QSizePolicy, QMessageBox,
     QTreeWidget, QTreeWidgetItem, QDialog, QFileDialog, QApplication
 )
@@ -303,13 +303,16 @@ class NormalMainWindow(QMainWindow):
         self.prev_btn = self._create_icon_btn("../res/left_arrow.png", "上一张")
         self.next_btn = self._create_icon_btn("../res/right_arrow.png", "下一张")
         self.comment_btn = self._create_text_btn("显示评论", "#3498db")
+        self.history_btn = self._create_text_btn("显示历史修改数据", "#9b59b6")  # 新增按钮
 
         self.prev_btn.clicked.connect(lambda: self.navigation_requested.emit(-1))
         self.next_btn.clicked.connect(lambda: self.navigation_requested.emit(1))
         self.comment_btn.clicked.connect(self._show_comments)
+        self.history_btn.clicked.connect(self._show_change_history)  # 按钮点击事件
 
         nav_bar.addWidget(self.prev_btn)
         nav_bar.addWidget(self.comment_btn)
+        nav_bar.addWidget(self.history_btn)  # 添加到导航栏
         nav_bar.addWidget(self.next_btn)
         layout.addLayout(nav_bar)
 
@@ -317,6 +320,25 @@ class NormalMainWindow(QMainWindow):
         layout.addWidget(self.info_panel, 1)
 
         return view
+
+    def _show_change_history(self):
+        """显示地图的历史修改数据"""
+        try:
+            url = f"{SERVER_URL}/user/{self.uid}/changes/curr"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                changes = response.json().get("arcs")
+                if changes:
+                    dialog = ChangeHistoryDialog(changes, self)
+                    dialog.exec_()
+                else:
+                    QMessageBox.critical(self, "info", "无任何修改信息")
+            else:
+                error_msg = response.json().get("detail", "未知错误")
+                QMessageBox.critical(self, "错误", f"无法获取修改数据: {error_msg}")
+        except Exception as e:
+            QMessageBox.critical(self, "错误", f"获取修改数据时发生异常:\n{str(e)}")
 
     def _create_comment_view(self):
         view = QWidget()
@@ -750,6 +772,45 @@ class AddMapDialog(QDialog):
                 QMessageBox.warning(self, "警告", f"更新地图信息失败: {detail_msg}")
         except Exception as e:
             QMessageBox.warning(self, "警告", f"更新地图信息失败: {str(e)}")
+
+class ChangeHistoryDialog(QDialog):
+    def __init__(self, changes, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("地图修改历史")
+        self.setMinimumSize(800, 400)
+        self._init_ui(changes)
+
+    def _init_ui(self, changes):
+        layout = QVBoxLayout(self)
+
+        # 表格标题
+        title = QLabel("地图修改历史记录")
+        title.setStyleSheet("font-weight: bold; font-size: 16px; margin-bottom: 10px;")
+        layout.addWidget(title)
+
+        # 表格
+        table = QTableWidget()
+        table.setColumnCount(6)  # 设置列数
+        table.setHorizontalHeaderLabels([
+            "用户名", "地图名称", "修改时间", "新地图名称", "新地图类型", "新媒介类型"
+        ])
+        layout.addWidget(table)
+
+        # 填充表格数据
+        changes.sort(key=lambda x: x["change_time"], reverse=True)  # 按修改时间排序
+        table.setRowCount(len(changes))
+
+        for row, change in enumerate(changes):
+            table.setItem(row, 0, QTableWidgetItem(change.get("user_name", "未知用户")))
+            table.setItem(row, 1, QTableWidgetItem(change.get("map_name", "未知地图")))
+            table.setItem(row, 2, QTableWidgetItem(change.get("change_time", "")))
+            table.setItem(row, 3, QTableWidgetItem(change.get("new_map_name", "")))
+            table.setItem(row, 4, QTableWidgetItem(change.get("new_map_type", "")))
+            table.setItem(row, 5, QTableWidgetItem(change.get("new_media_type", "")))
+
+        # 设置表格属性
+        table.resizeColumnsToContents()
+        table.resizeRowsToContents()
 
 
 if __name__ == "__main__":

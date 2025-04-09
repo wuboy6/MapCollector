@@ -106,7 +106,7 @@ def get_change_details_by_current_map(uid: str):
 def get_current_map_full_change_details_route(uid: str):
     status, details = get_change_details(uid)
     if status == 0:
-        return details
+        return {"arcs": details}
     raise HTTPException(status_code=500, detail=f"服务器错误: 错误码{status}")
 
 @app.put("/user/{uid}/current_map/{mapid}")

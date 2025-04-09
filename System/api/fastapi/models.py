@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 from typing import Optional, Dict, List
 from fastapi import Form, File, UploadFile
 
@@ -29,7 +29,7 @@ class AddMapRequest(BaseModel):
     file: str  # 字符串化的图片内容 (Base64 编码)
 
 class ChangeMapRequest(BaseModel):
-    arcs: Optional[Dict] = None
+    arcs: Optional[List] = []
 
 class SearchRequest(BaseModel):
     query_name: str = ""
