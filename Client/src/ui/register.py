@@ -6,10 +6,10 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
-SERVER_URL = "http://127.0.0.1:8000"  # 修改为你的服务端地址
+SERVER_URL = "http://127.0.0.1:8000"  
 
 class RegisterWindow(QWidget):
-    register_success = pyqtSignal(str)  # 传递注册成功的邮箱
+    register_success = pyqtSignal(str)  
 
     def __init__(self):
         super().__init__()

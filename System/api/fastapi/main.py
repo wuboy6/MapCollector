@@ -1,14 +1,53 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from models import *
 from services import *
 import os
 import uuid
 import base64
+from pathlib import Path
 
 app = FastAPI(title="Map Collector API")
 
+# 添加CORS中间件，允许跨源请求
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 开发环境下允许所有源，生产环境应该限制特定源
+    allow_credentials=True,
+    allow_methods=["*"],  # 允许所有HTTP方法
+    allow_headers=["*"],  # 允许所有headers
+)
+
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# 静态图片获取
+# 获取当前文件所在目录的绝对路径
+BASE_DIR = Path(__file__).parent.resolve()
+# 定义资源文件夹路径
+RES_DIR = BASE_DIR / "res"
+
+
+@app.get("/image/{filename}")
+async def get_image(filename: str):
+    try:
+        # 构造安全路径（自动过滤路径遍历攻击）
+        target_path = (RES_DIR / filename).resolve().relative_to(RES_DIR.resolve())
+
+        # 验证文件是否存在
+        if not target_path.is_file():
+            raise HTTPException(status_code=404, detail="Image not found")
+
+        return FileResponse(target_path)
+
+    except ValueError:
+        # 处理路径越权访问
+        raise HTTPException(status_code=403, detail="Access denied")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # 用户相关端点
 @app.post("/register", response_model=UserResponse)
 def register(req: RegisterRequest):

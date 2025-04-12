@@ -39,7 +39,10 @@ class MapServer:
 
     def add_map(self, file_path: str, map_name: str) -> Tuple[int, str]:
         mat = self.load_mat(file_path)
-        return fs.add_map(map_name, mat)
+        details =  fs.add_map(map_name, mat)
+        _, self._maps = fs.get_map_list()
+        self.search_engine = MapSearchEngine(self._maps)
+        return details
 
     def change_map(self,mapid_str: str, arcs: Optional[Dict] = None) -> int :
         return fs.change_map(mapid_str, arcs)

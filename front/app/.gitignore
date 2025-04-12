@@ -1,0 +1,64 @@
+# 依赖目录
+node_modules
+.pnp
+.pnp.js
+
+# 测试覆盖率
+coverage
+
+# 生产构建文件
+dist
+dist-ssr
+*.local
+
+# 日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 编辑器目录和文件
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 环境文件
+.env
+.env.*
+!.env.example
+
+# 本地历史文件
+.history
+
+# 缓存文件
+.cache
+.temp
+.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 调试文件
+debug.log
+
+# 构建工具生成的临时文件
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# 测试文件
+/coverage
+/test-results
+
+# 其他
+*.bak
+*.swp
+*.swo
+*~
